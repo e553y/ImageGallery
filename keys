@@ -1,0 +1,10 @@
+jQuery.ajax({
+	url:'https://api.unsplash.com/search/photos',
+	dataType: 'json',
+	data: {
+client_id:'1806d077d79d002fa842ccd4903cc0847dc06b34e8837b143e0084d84a62a68f',
+query: "children",
+},
+	success: (data)=> console.log(data)
+
+})

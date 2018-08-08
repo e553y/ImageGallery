@@ -1,0 +1,22 @@
+
+input.search-sm{
+	max-width: 50%;
+	border-radius: 
+}
+
+
+.card-img-overlay .photo-info-bottom {
+		display: none;
+		position: absolute;
+		padding: 0;
+		bottom: 0;
+		width: 100%;
+		background-color: rgba(0,0,0,0.2)
+}
+.card-body{
+	display: none;
+}
+.content-area{ /*account for the fixed navbar*/
+	position: relative;
+	top: 54px;
+}

@@ -1,0 +1,119 @@
+let myApiWrapper = new ApiWrapper();
+
+function populatePhotos(jsonArray, displayArea, callId, append = false) {
+
+	console.log(jsonArray)
+	let images = jsonArray.reduce((divElmts, elem, i) => {
+		let currentjQElem = $(`<div class="card p-0 image-card">
+			<img class="card-img" src="${elem.urls.small}">
+			<div class="card-img-overlay p-0">	
+				<div class="photo-info-bottom text-white p-2">
+					<img class="rounded-circle .img-fluid float-left mr-2" src="${elem.user.profile_image.small}">
+					<h6 class="card-subtitle">${elem.user.name}</h5>
+				</div>
+			</div>
+		</div>`);
+
+		currentjQElem.click((e) => clickHandler(e, jsonArray, i))
+		currentjQElem.hover((e) => hoverHandler.call(currentjQElem, e));
+
+		return divElmts.add(currentjQElem);
+
+	}, $(' '));
+
+	let loadMoreHandlerLink = $(displayArea).children('a.load-more');
+	loadMoreHandlerLink.off().one('click', (e) => loadMoreHandler(e, callId))
+
+	//remove previous pictures if another photo is selected
+
+	if (!append) {
+		$(displayArea).children('*:not(".load-more")').remove()
+	}
+
+	$(displayArea).children('a.load-more').before(images)
+
+
+
+
+}
+
+function appendToPopulatedPhotos(jsonArray, displayArea, callId) {
+	populatePhotos(jsonArray, displayArea, callId, true)
+
+}
+
+function hoverHandler(e) {
+	$(this).find('.photo-info-bottom').fadeToggle("fast")
+}
+
+function loadMoreHandler(e, callId) {
+	e.preventDefault();
+	console.log(callId);
+	let parentDisplayArea = $(e.target).closest('.display-area-deck')
+	myApiWrapper.getNextPagePhotos(callId)
+		.then((response) => appendToPopulatedPhotos(response.data, parentDisplayArea, response.callId))
+}
+
+function clickHandler(e, data, i) {
+
+	let thisImageData = data[i]
+	$('#content-selected').show().siblings('.content-area').hide(); // show the selected photos panel
+
+	/*display artist info on jumbotron*/
+	let user = thisImageData.user;
+	let generalTags = "trend modern woman man nature technology retro futuristic art stuff exotic rare beautiful"
+	let querystring = thisImageData.tags ? thisImageData.tags.concat(thisImageData.photo_tags).reduce((r, e) => r + ' ' + e.title, '') : generalTags; //search using "all" keyword for untagged photos
+	console.log(thisImageData);
+	console.log(querystring);
+	/*show selcted photo enlarged*/
+	$('#selected-photo .selected-photo').attr('src', thisImageData.urls.regular);
+	$('#selected-photo .photo-description').html(thisImageData.description);
+	$('#selected-photo .photo-time').html('taken on ' + new Date(thisImageData.created_at).toLocaleDateString())
+	/*show artist info and social networks*/
+	$('#jumbotron-selected .user-photo').attr('src', thisImageData.user.profile_image.large);
+	$('#jumbotron-selected .user-name').html(thisImageData.user.name);
+	$('#jumbotron-selected .user-description').html(user.bio || " ");
+	$('#jumbotron-selected .user-socialmedia').html(`<a href='https://twitter.com/${user.twitter_username}'>@ ${user.twitter_username}</a>`)
+	$('#jumbotron-selected .user-location').html(user.location)
+
+
+	/*populate photos by same artist section*/
+	myApiWrapper.getPhotosByUser(user.username, 1, 4)
+		.then((response) => (console.log("related" + response),populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#same-artist-deck'), response.callId), response)) //filter out current photo
+
+	/*populate related photos section*/
+	/*if (querystring == '') {
+		let apiPromise = myApiWrapper.getRandomPhotos('', 10);
+		
+		apiPromise.then((response) => populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId)) //remove current image from list of related photos
+	} else {
+		myApiWrapper.getPhotosByQuery(querystring, 1, 10)
+			.then((response) => (populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId), response)) //remove current image from list of related photos
+	}*/
+	myApiWrapper.getPhotosByQuery(querystring, 1, 10)
+		.then((response) => (populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId), response)) //remove current image from list of related photos
+
+
+}
+
+
+$(() => {
+
+	myApiWrapper.getPhotosByPopularity('latest', 1, 10)
+		.then((response) => {
+			populatePhotos(response.data, $("#home-deck"), response.callId);
+			return response
+		})
+	$('form').submit(function (event) {
+		event.preventDefault()
+
+		$('#content-search').show().siblings('.content-area').hide()
+		let queryString = $(this).find('.search-bar').val();
+		console.log(queryString);
+
+		myApiWrapper.getPhotosByQuery(queryString)
+			.then(response => (populatePhotos(response.data, $('#search-results-deck'), response.callId), response))
+	})
+
+
+})
