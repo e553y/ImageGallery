@@ -9,7 +9,8 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<!-- jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+	<!--masonry plugin-->
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 	<!-- bootstrap JavaScript -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	<!-- local css -->
@@ -18,30 +19,35 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-xs navbar-light bg-light fixed-top">
-		<a class="navbar-brand" href="/index.html">Infinite Gallery</a>
+	<nav class="navbar navbar-expand-xs navbar-light bg-light container-fluid fixed-top">
+		<a class="navbar-brand m-0 p-0 col" href="/index.html">Infinite Gallery</a>
 		<!-- Toggle 
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>-->
 		<!--navbar search -->
-		<form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2 search-bar" type="text" placeholder="Search" aria-label="Search">
-			<button class="btn btn-light my-2 my-sm-0" type="submit">Search</button>
+		<form class="form-row col">
+			<div class='col-8'>
+				<input class="form-control form-control-sm search-bar" type="text" placeholder="Search" aria-label="Search">
+			</div>
+			<div class='col-4'>
+				<button class="btn btn-light btn-sm btn-outline-dark" type="submit">Search</button>
+			</div>
+
 		</form>
 		<!--end of navbar search-->
 
 
 	</nav>
-	<div class="content-area" id="content-home" style="display: unset" >
+	<div class="content-area" id="content-home" style="display: unset">
 		<div class="jumbotron jumbotron-fluid  background" id="jumbotron-home">
 			<div class="container align-content-center text-center">
 				<h1 class="display-4">Browse through an endless gallery!</h1>
 				<form class="form mx-auto" id="search-home">
 
-					<div class="form-group mx-sm-3 mb-2" >
+					<div class="form-group mx-sm-3 mb-2">
 						<label for="search-bar" class="sr-only">search</label>
-						<input type="text" class="form-control text-center search-bar"  name="query" placeholder="search..." >
+						<input type="text" class="form-control text-center search-bar" name="query" placeholder="search...">
 					</div>
 					<button type="submit" class="btn btn-light mb-2">Search</button>
 				</form>
@@ -53,18 +59,20 @@
 				<h3 class="display-area-text">Trending Photos</h3>
 			</div>
 			<div class="container-fluid card-columns p-1 display-area-deck" id="home-deck">
-				
-				<a class=" load-more" id="load-more-home" href="#">Load more...</a>
+
+				<a class="load-more" id="load-more-home" href="#">Load more...</a>
 			</div>
 		</div>
 	</div>
 	<div class="content-area" id="content-selected" style="display: none">
-		<div class="jumbotron jumbotron-fluid user-info" id="jumbotron-selected">
-			<img class="rounded-circle float-left mr-4 user-photo" src="https://images.unsplash.com/placeholder-avatars/extra-large.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128&s=ee8bbf5fb8d6e43aaaa238feae2fe90d">
-			<h2 class="user-name"></h2>
-			<p class="py-1 my-0 user-description"> </p>
-			<p class="py-1 my-0 user-socialmedia"></p>
-			<p class="py-1 my-0 user-location"></p>
+		<div class="jumbotron user-info" id="jumbotron-selected">
+			<img class="rounded-circle mb-5 mr-2 float-left user-photo" src="https://images.unsplash.com/placeholder-avatars/extra-large.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128&s=ee8bbf5fb8d6e43aaaa238feae2fe90d">
+			<div>
+				<h2 class="user-name"></h2>
+				<p class="user-description"> </p>
+				<p class="user-socialmedia"></p>
+				<p class=" user-location"></p>
+			</div>
 		</div>
 		<div class="card mb-3 selected-photo-card" id="selected-photo">
 			<img class="card-img-top selected-photo" src="" alt="Card image cap">
@@ -78,7 +86,7 @@
 				<h3 class="display-area-text">Photos By Same artist </h3>
 			</div>
 			<div class="container-fluid card-columns p-1 display-area-deck" id="same-artist-deck">
-				<a class=" load-more" id="load-more-same-artist" href="#">Load more...</a>
+				<a class="load-more" id="load-more-same-artist" href="#">Load more...</a>
 			</div>
 		</div>
 		<div class="container-fluid border p-1 display-area">
@@ -86,7 +94,7 @@
 				<h3 class="display-area-text">Related Photos </h3>
 			</div>
 			<div class="container-fluid card-columns p-1 display-area-deck" id="related-deck">
-				<a class=" load-more" id="load-more-related" href="#">Load more...</a>
+				<a class="load-more" id="load-more-related" href="#">Load more...</a>
 			</div>
 		</div>
 	</div>
@@ -96,7 +104,7 @@
 				<h3 class="display-area-text">Search results</h3>
 			</div>
 			<div class="container-fluid card-columns p-1 display-area-deck" id="search-results-deck">
-				<a class=" load-more" id="load-more-search" href="#">Load more...</a>
+				<a class="load-more" id="load-more-search" href="#">Load more...</a>
 			</div>
 		</div>
 	</div>

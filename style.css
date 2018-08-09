@@ -24,3 +24,6 @@ a.load-more:not(#load-more-same-artist){
 	visibility: hidden;
 	
 }
+.grid-item{
+	width: 33.3%;
+}

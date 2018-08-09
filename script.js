@@ -32,8 +32,6 @@ function populatePhotos(jsonArray, displayArea, callId, append = false) {
 
 	}, $(' '));
 
-	let loadMoreHandlerLink = $(displayArea).children('a.load-more');
-	loadMoreHandlerLink.off().one('click', (e) => loadMoreHandler(e, callId))
 
 	$(displayArea).children('a.load-more').off().one('click', (e) => loadMoreHandler(e, callId))
 
@@ -71,7 +69,8 @@ function clickHandler(e, data, i) {
 
 	let thisImageData = data[i]
 	$('#content-selected').show().siblings('.content-area').hide(); // show the selected photos panel
-
+	/*empty previous info*/
+	
 	/*display artist info on jumbotron*/
 	let user = thisImageData.user;
 	let generalTags = "trend modern woman man nature technology retro futuristic art stuff exotic rare beautiful"
@@ -82,6 +81,7 @@ function clickHandler(e, data, i) {
 	$('#selected-photo .selected-photo').attr('src', thisImageData.urls.regular);
 	$('#selected-photo .photo-description').html(thisImageData.description);
 	$('#selected-photo .photo-time').html('taken on ' + new Date(thisImageData.created_at).toLocaleDateString())
+	
 	/*show artist info and social networks*/
 	$('#jumbotron-selected .user-photo').attr('src', thisImageData.user.profile_image.large);
 	$('#jumbotron-selected .user-name').html(thisImageData.user.name);
@@ -93,21 +93,12 @@ function clickHandler(e, data, i) {
 
 	/*populate photos by same artist section*/
 	myApiWrapper.getPhotosByUser(user.username, 1, 4)
-		.then((response) => (console.log("related" + response),populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#same-artist-deck'), response.callId), response)) //filter out current photo
+		.then((response) => (console.log("related" + response), populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#same-artist-deck'), response.callId), response)) //filter out current photo
 
-	/*populate related photos section*/
-	/*if (querystring == '') {
-		let apiPromise = myApiWrapper.getRandomPhotos('', 10);
-		
-		apiPromise.then((response) => populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId)) //remove current image from list of related photos
-	} else {
-		myApiWrapper.getPhotosByQuery(querystring, 1, 10)
-			.then((response) => (populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId), response)) //remove current image from list of related photos
-	}*/
 	myApiWrapper.getPhotosByQuery(querystring, 1, 10)
 		.then((response) => (populatePhotos(response.data.filter((e) => e.id != thisImageData.id), $('#related-deck'), response.callId), response)) //remove current image from list of related photos
 
-
+	$(window).scrollTop(0);
 }
 
 
@@ -122,12 +113,19 @@ $(() => {
 		event.preventDefault()
 
 		$('#content-search').show().siblings('.content-area').hide()
+		$('#search-results-deck').children('.image-card').remove()
 		let queryString = $(this).find('.search-bar').val();
 		console.log(queryString);
-
+		
 		myApiWrapper.getPhotosByQuery(queryString)
 			.then(response => (populatePhotos(response.data, $('#search-results-deck'), response.callId), response))
 	})
+
+	$(window).scroll(function () {
+		if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+			$('.display-area-deck:not(#same-artist-deck) a.load-more').filter(':visible').trigger('click');
+		}
+	});
 
 
 })
