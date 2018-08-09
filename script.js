@@ -1,7 +1,18 @@
 let myApiWrapper = new ApiWrapper();
 
 function populatePhotos(jsonArray, displayArea, callId, append = false) {
-
+	if(jsonArray.length == 0){
+		debugger;
+		switch( $(displayArea).children('.image-card').length ){
+				
+			case 0:
+				displayArea.append($('<p>').html('No Photos found'))
+			default:
+				displayArea.children('a.load-more').off()
+				displayArea.children('a.load-more:visible').hide()
+		}
+		return
+	}
 	console.log(jsonArray)
 	let images = jsonArray.reduce((divElmts, elem, i) => {
 		let currentjQElem = $(`<div class="card p-0 image-card">
