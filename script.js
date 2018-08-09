@@ -1,7 +1,18 @@
 let myApiWrapper = new ApiWrapper();
 
 function populatePhotos(jsonArray, displayArea, callId, append = false) {
-
+	if(jsonArray.length == 0){
+		debugger;
+		switch( $(displayArea).children('.image-card').length ){
+				
+			case 0:
+				displayArea.append($('<p>').html('No Photos found'))
+			default:
+				displayArea.children('a.load-more').off()
+				displayArea.children('a.load-more:visible').hide()
+		}
+		return
+	}
 	console.log(jsonArray)
 	let images = jsonArray.reduce((divElmts, elem, i) => {
 		let currentjQElem = $(`<div class="card p-0 image-card">
@@ -24,7 +35,9 @@ function populatePhotos(jsonArray, displayArea, callId, append = false) {
 	let loadMoreHandlerLink = $(displayArea).children('a.load-more');
 	loadMoreHandlerLink.off().one('click', (e) => loadMoreHandler(e, callId))
 
-	//remove previous pictures if another photo is selected
+	$(displayArea).children('a.load-more').off().one('click', (e) => loadMoreHandler(e, callId))
+
+
 
 	if (!append) {
 		$(displayArea).children('*:not(".load-more")').remove()
@@ -75,7 +88,8 @@ function clickHandler(e, data, i) {
 	$('#jumbotron-selected .user-description').html(user.bio || " ");
 	$('#jumbotron-selected .user-socialmedia').html(`<a href='https://twitter.com/${user.twitter_username}'>@ ${user.twitter_username}</a>`)
 	$('#jumbotron-selected .user-location').html(user.location)
-
+	/*display loadmore link */
+	$('#load-more-same-artist').show()
 
 	/*populate photos by same artist section*/
 	myApiWrapper.getPhotosByUser(user.username, 1, 4)

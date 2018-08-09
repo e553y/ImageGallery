@@ -20,3 +20,7 @@ input.search-sm{
 	position: relative;
 	top: 54px;
 }
+a.load-more:not(#load-more-same-artist){
+	visibility: hidden;
+	
+}
